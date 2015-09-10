@@ -44,68 +44,18 @@ EFI_UNICODE_STRING_TABLE gDeviceNameTable[] =
     {NULL, NULL}
 };
 
-EFI_STATUS
-EFIAPI
-SampleComponentNameGetDriverName (
-    IN EFI_COMPONENT_NAME_PROTOCOL *This,
-    IN CHAR8 *Language,
-    OUT CHAR16 **DriverName
-    )
-{
-    //
-    // Find a matching string in the driver name string table
-    //
-    return LookupUnicodeString2(Language,
-                                This->SupportedLanguages,
-                                gDriverNameTable,
-                                DriverName,
-                                This == &gComponentNameProtocol);
+EFI_STATUS EFIAPI SampleComponentNameGetDriverName(IN EFI_COMPONENT_NAME_PROTOCOL *This, IN CHAR8 *Language, OUT CHAR16 **DriverName) {
+	return LookupUnicodeString2(Language, This->SupportedLanguages, gDriverNameTable, DriverName, This == &gComponentNameProtocol);
 }
 
-EFI_STATUS
-EFIAPI
-SampleComponentNameGetControllerName (
-    IN EFI_COMPONENT_NAME_PROTOCOL *This,
-    IN EFI_HANDLE ControllerHandle,
-    IN EFI_HANDLE ChildHandle OPTIONAL,
-    IN CHAR8 *Language,
-    OUT CHAR16 **ControllerName
-    )
-{
-    EFI_STATUS efiStatus;
+EFI_STATUS EFIAPI SampleComponentNameGetControllerName(IN EFI_COMPONENT_NAME_PROTOCOL *This, IN EFI_HANDLE ControllerHandle,
+	IN EFI_HANDLE ChildHandle OPTIONAL, IN CHAR8 *Language, OUT CHAR16 **ControllerName) {
+	if (ChildHandle != NULL)
+		return EFI_UNSUPPORTED;
 
-    //
-    // We don't currently support names for our child devices
-    //
-    if (ChildHandle != NULL)
-    {
-       efiStatus =  EFI_UNSUPPORTED;
-       goto Exit;
-    }
+	EFI_STATUS efiStatus = EfiTestManagedDevice(ControllerHandle, gDriverBindingProtocol.DriverBindingHandle, &gEfiPciIoProtocolGuid);
+	if (EFI_ERROR(efiStatus))
+		return efiStatus;
 
-    //
-    // Make sure that this is a device we support
-    //
-    efiStatus = EfiTestManagedDevice(ControllerHandle,
-                                     gDriverBindingProtocol.DriverBindingHandle,
-                                     &gEfiPciIoProtocolGuid);
-    if (EFI_ERROR(efiStatus))
-    {
-        goto Exit;
-    }
-
-    //
-    // Find a matching string in the device name string table
-    //
-    efiStatus = LookupUnicodeString2(Language,
-                                     This->SupportedLanguages,
-                                     gDeviceNameTable,
-                                     ControllerName,
-                                     This == &gComponentNameProtocol);
-
-Exit:
-    //
-    // Return back to DXE
-    //
-    return efiStatus;
+	return LookupUnicodeString2(Language, This->SupportedLanguages, gDeviceNameTable, ControllerName, This == &gComponentNameProtocol);
 }

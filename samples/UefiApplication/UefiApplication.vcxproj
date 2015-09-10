@@ -8,6 +8,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{79D78FD5-8F41-442F-944E-81774DC9DF39}</ProjectGuid>
+    <ProjectName>ARK</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
@@ -17,6 +19,9 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -27,7 +32,11 @@
     <GenerateManifest>false</GenerateManifest>
     <LibraryPath>..\..\edk-ii\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <TargetExt>.efi</TargetExt>
-    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\obj\</IntDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\obj\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)..\image\efi\boot\</OutDir>
+    <TargetName>bootx64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -49,14 +58,20 @@
       <EntryPointSymbol>EfiMain</EntryPointSymbol>
       <SetChecksum>true</SetChecksum>
       <Driver>Driver</Driver>
-      <RandomizedBaseAddress/>
-      <DataExecutionPrevention/>
+      <RandomizedBaseAddress />
+      <DataExecutionPrevention />
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="helloapp.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="shell.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ark.h" />
+    <ClInclude Include="shell.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
   </ImportGroup>
 </Project>

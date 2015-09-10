@@ -8,6 +8,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DF325AB7-67A6-473E-93FF-16955AFBC063}</ProjectGuid>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup>
@@ -27,7 +28,10 @@
     <GenerateManifest>false</GenerateManifest>
     <TargetExt>.efi</TargetExt>
     <LibraryPath>..\..\edk-ii\x64\Release\;$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\obj\</IntDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\obj\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)..\image\efi\boot\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
