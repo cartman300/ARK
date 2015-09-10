@@ -20,22 +20,23 @@ void* LocateProtocol(IN EFI_SYSTEM_TABLE* ST, IN EFI_GUID* GUID) {
 	return Ret;
 }
 
+void shellcmd_shutdown(const EFI_SYSTEM_TABLE* SysTab, CHAR16* In) {
+	SysTab->RuntimeServices->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
+}
+
 EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* SystemTable) {
 	shell_init(SystemTable);
-	BOOLEAN Running = TRUE;
+	shell_register(L"shutdown", L"Shuts down the system", shellcmd_shutdown);
 
 	CHAR16 Buf[80];
+	BOOLEAN Running = TRUE;
 	while (Running) {
 		shell_write(L"> ");
 		shell_read(Buf, 80);
-		shell_write(L"You wrote: ");
-		shell_write(Buf);
-
-		
+		shell_exec(Buf);
 	}
 
 	DisableInterrupts();
 	__halt();
-	SystemTable->RuntimeServices->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
 	return EFI_SUCCESS;
 }

@@ -5,3 +5,7 @@ x64
 *.suo
 debugger/stderr.txt
 debugger/stdout.txt
+*.pdb
+*.efi
+*.iobj
+*.ipdb

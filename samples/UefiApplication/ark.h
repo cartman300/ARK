@@ -12,3 +12,5 @@
 
 #include <intrin.h>
 #include "shell.h"
+
+#define WaitForSingleEvent(ST, Ev) do { UINTN Idx; ST->BootServices->WaitForEvent(1, &Ev, &Idx); } while(FALSE)
