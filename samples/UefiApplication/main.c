@@ -24,9 +24,16 @@ void shellcmd_shutdown(const EFI_SYSTEM_TABLE* SysTab, CHAR16* In) {
 	SysTab->RuntimeServices->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
 }
 
+void shellcmd_info(const EFI_SYSTEM_TABLE* SysTab, CHAR16* In) {
+	shell_writef(L"Vendor: %s\r\nRevision: %d\r\n", SysTab->FirmwareVendor, SysTab->FirmwareRevision);
+	//EFI_SMM_SYSTEM_TABLE2* SMM = (EFI_SMM_SYSTEM_TABLE2*)LocateProtocol(SysTab, NULL);
+	shell_writef(L"CPU count: %d\r\n", /*SMM->NumberOfCpus*/ -1);
+}
+
 EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* SystemTable) {
 	shell_init(SystemTable);
 	shell_register(L"shutdown", L"Shuts down the system", shellcmd_shutdown);
+	shell_register(L"info", L"Displays system information", shellcmd_info);
 
 	CHAR16 Buf[80];
 	BOOLEAN Running = TRUE;
@@ -35,7 +42,7 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syste
 		shell_read(Buf, 80);
 		shell_exec(Buf);
 	}
-
+	
 	DisableInterrupts();
 	__halt();
 	return EFI_SUCCESS;
